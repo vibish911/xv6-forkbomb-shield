@@ -110,3 +110,15 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_shield(void)
+{
+  int n;
+  argint(0, &n);
+  if (n < 0)
+    return -1;
+  myproc()->max_children = n;
+  return 0;
+}
+

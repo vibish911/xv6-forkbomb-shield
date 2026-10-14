@@ -91,6 +91,8 @@ struct proc {
 
   // wait_lock must be held when using this:
   struct proc *parent; // Parent process
+  int max_children;    // Max active children allowed (-1 for unlimited)
+
 
   // these are private to the process, so p->lock need not be held.
   uint64 kstack;               // Virtual address of kernel stack

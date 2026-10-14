@@ -124,6 +124,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->max_children = -1;
 
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
@@ -167,6 +168,7 @@ freeproc(struct proc *p)
   p->chan = 0;
   p->killed = 0;
   p->xstate = 0;
+  p->max_children = -1;
   p->state = UNUSED;
 }
 
@@ -262,10 +264,26 @@ kfork(void)
   struct proc *np;
   struct proc *p = myproc();
 
+  // Shield: enforce per-process child limit
+  if (p->max_children >= 0) {
+    acquire(&wait_lock);
+    int count = 0;
+    for (struct proc *pp = proc; pp < &proc[NPROC]; pp++) {
+      if (pp->parent == p && pp->state != UNUSED)
+        count++;
+    }
+    release(&wait_lock);
+    if (count >= p->max_children) {
+      return -1;
+    }
+  }
+
   // Allocate process.
   if ((np = allocproc()) == 0) {
     return -1;
   }
+
+  np->max_children = p->max_children;
 
   // Copy user memory from parent to child.
   if (uvmcopy(p->pagetable, np->pagetable, p->sz) < 0) {
