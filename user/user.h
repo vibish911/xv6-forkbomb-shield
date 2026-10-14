@@ -27,7 +27,6 @@ int uptime(void);
 int sync(void);
 int shield(int);
 
-
 // ulib.c
 int stat(const char *, struct stat *);
 char *strcpy(char *, const char *);

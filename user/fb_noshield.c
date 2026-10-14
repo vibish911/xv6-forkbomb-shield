@@ -13,7 +13,9 @@ main(void)
   while (1) {
     int pid = fork();
     if (pid < 0) {
-      printf("[PID %d] fork() failed: process table full! System is exhausted.\n", getpid());
+      printf(
+        "[PID %d] fork() failed: process table full! System is exhausted.\n",
+        getpid());
       // Pause briefly so process slots remain occupied to observe saturation
       pause(50);
       exit(1);

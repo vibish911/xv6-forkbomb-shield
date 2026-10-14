@@ -93,7 +93,6 @@ struct proc {
   struct proc *parent; // Parent process
   int max_children;    // Max active children allowed (-1 for unlimited)
 
-
   // these are private to the process, so p->lock need not be held.
   uint64 kstack;               // Virtual address of kernel stack
   uint64 sz;                   // Size of process memory (bytes)
